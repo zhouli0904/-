@@ -1,0 +1,118 @@
+<?com.test.springbootdemo.xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.springbootdemo.api.mapper.GoodsActivityInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.test.springbootdemo.api.entity.GoodsActivityInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="goods_id" property="goodsId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="activity_type" property="activityType" jdbcType="INTEGER" />
+    <result column="activity_id" property="activityId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_id, create_time, update_time, goods_name, activity_type, activity_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from goods_activity_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from goods_activity_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.test.springbootdemo.api.entity.GoodsActivityInfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into goods_activity_info (goods_id, create_time, update_time, 
+      goods_name, activity_type, activity_id
+      )
+    values (#{goodsId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{goodsName,jdbcType=VARCHAR}, #{activityType,jdbcType=INTEGER}, #{activityId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.test.springbootdemo.api.entity.GoodsActivityInfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into goods_activity_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="goodsName != null" >
+        goods_name,
+      </if>
+      <if test="activityType != null" >
+        activity_type,
+      </if>
+      <if test="activityId != null" >
+        activity_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="goodsName != null" >
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="activityType != null" >
+        #{activityType,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.test.springbootdemo.api.entity.GoodsActivityInfo" >
+    update goods_activity_info
+    <set >
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="goodsName != null" >
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="activityType != null" >
+        activity_type = #{activityType,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null" >
+        activity_id = #{activityId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.test.springbootdemo.api.entity.GoodsActivityInfo" >
+    update goods_activity_info
+    set goods_id = #{goodsId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      goods_name = #{goodsName,jdbcType=VARCHAR},
+      activity_type = #{activityType,jdbcType=INTEGER},
+      activity_id = #{activityId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <insert id="insertBatch" parameterType="com.test.springbootdemo.api.entity.GoodsActivityInfo">
+    INSERT INTO goods_activity_info (goods_id, goods_name, activity_type, activity_id) VALUES
+    <foreach collection="list" item="item" open="" separator="," close="">
+      (#{item.goodsId,jdbcType=BIGINT}, #{item.goodsName,jdbcType=VARCHAR},
+      #{item.activityType,jdbcType=INTEGER}, #{item.activityId,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+</mapper>

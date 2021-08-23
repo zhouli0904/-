@@ -1,0 +1,68 @@
+<?com.test.springbootdemo.xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!-- 数据库驱动:选择你的本地硬盘上面的数据库驱动包-->
+    <classPathEntry location="src/main/resources/mysql-connector-java-5.1.47.jar"/>
+    <context id="mysql" targetRuntime="MyBatis3">
+
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin">
+            <property name="suppressJavaInterface" value="false" />
+        </plugin>
+
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!--数据库链接URL，用户名、密码 -->
+        <!--  
+            11679-DEMETER数据库
+            <jdbcConnection 
+            driverClass="com.mysql.jdbc.Driver" 
+            connectionURL="jdbc:mysql://rm-bp119f05ug9z24073.mysql.rds.aliyuncs.com:3306/zmc_ai_record" 
+            userId="ai_record_rw"
+            password="Fa4IVByz0d2aSw9TK" 
+        />
+
+          -->
+        <jdbcConnection 
+            driverClass="com.mysql.jdbc.Driver" 
+            connectionURL="jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8"
+            userId="root"
+            password="rootroot"
+        />
+
+
+
+        <javaTypeResolver>
+            <!-- <property name="forceBigDecimals" value="false"/>  -->
+        </javaTypeResolver>
+
+        <!-- 生成模型的包名和位置-->
+        <javaModelGenerator targetPackage="com.test.springbootdemo.entity" targetProject="src/main/java/">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- 生成映射文件的包名和位置-->
+        <sqlMapGenerator targetPackage="com.test.springbootdemo.xml" targetProject="src/main/java/">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- 生成DAO的包名和位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.test.springbootdemo.mapper" targetProject="src/main/java/">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        
+        <!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
+        <table tableName="goods_detail" domainObjectName="GoodsDetail" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+ 
+
+    </context>
+</generatorConfiguration>

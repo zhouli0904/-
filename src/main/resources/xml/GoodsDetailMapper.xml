@@ -1,0 +1,128 @@
+<?com.test.springbootdemo.xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.springbootdemo.api.mapper.GoodsDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.test.springbootdemo.api.entity.GoodsDetail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="origin_price" property="originPrice" jdbcType="BIGINT" />
+    <result column="price" property="price" jdbcType="BIGINT" />
+    <result column="goods_num" property="goodsNum" jdbcType="BIGINT" />
+    <result column="on_shelf" property="onShelf" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_time, update_time, goods_name, origin_price, price, goods_num, on_shelf
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from goods_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from goods_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.test.springbootdemo.api.entity.GoodsDetail" useGeneratedKeys="true" keyProperty="id" >
+    insert into goods_detail (create_time, update_time, goods_name,
+      origin_price, price, goods_num, 
+      on_shelf)
+    values (#{goodsName,jdbcType=VARCHAR},
+      #{originPrice,jdbcType=BIGINT}, #{price,jdbcType=BIGINT}, #{goodsNum,jdbcType=BIGINT}, 
+      #{onShelf,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.test.springbootdemo.api.entity.GoodsDetail" useGeneratedKeys="true" keyProperty="id" >
+    insert into goods_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="goodsName != null" >
+        goods_name,
+      </if>
+      <if test="originPrice != null" >
+        origin_price,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="goodsNum != null" >
+        goods_num,
+      </if>
+      <if test="onShelf != null" >
+        on_shelf,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="goodsName != null" >
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="originPrice != null" >
+        #{originPrice,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=BIGINT},
+      </if>
+      <if test="goodsNum != null" >
+        #{goodsNum,jdbcType=BIGINT},
+      </if>
+      <if test="onShelf != null" >
+        #{onShelf,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.test.springbootdemo.api.entity.GoodsDetail" >
+    update goods_detail
+    <set >
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="goodsName != null" >
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="originPrice != null" >
+        origin_price = #{originPrice,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=BIGINT},
+      </if>
+      <if test="goodsNum != null" >
+        goods_num = #{goodsNum,jdbcType=BIGINT},
+      </if>
+      <if test="onShelf != null" >
+        on_shelf = #{onShelf,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.test.springbootdemo.api.entity.GoodsDetail" >
+    update goods_detail
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      goods_name = #{goodsName,jdbcType=VARCHAR},
+      origin_price = #{originPrice,jdbcType=BIGINT},
+      price = #{price,jdbcType=BIGINT},
+      goods_num = #{goodsNum,jdbcType=BIGINT},
+      on_shelf = #{onShelf,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectListId" resultMap="BaseResultMap">
+    select * from goods_detail where id in
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+        #{id}
+    </foreach>
+  </select>
+</mapper>
