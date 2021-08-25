@@ -19,7 +19,8 @@
     from goods_activity_info
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from goods_activity_info
     where id = #{id,jdbcType=BIGINT}
   </delete>
@@ -115,4 +116,8 @@
       #{item.activityType,jdbcType=INTEGER}, #{item.activityId,jdbcType=BIGINT})
     </foreach>
   </insert>
+  <select id="selectActivityIdByGoodsId" parameterType="java.lang.Long" resultType="long">
+    select activity_id from goods_activity_info where goods_id = #{goodsId, jdbcType=BIGINT}
+  </select>
+
 </mapper>

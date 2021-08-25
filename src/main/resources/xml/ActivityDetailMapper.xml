@@ -10,28 +10,30 @@
     <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
     <result column="activity_type" property="activityType" jdbcType="INTEGER" />
     <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="extend" property="extend" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, create_time, update_time, activity_name, start_time, end_time, activity_type, 
-    state
+    id, create_time, update_time, activity_name, start_time, end_time, activity_type,
+    state, extend
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from activity_detail
     where id = #{id,jdbcType=BIGINT}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from activity_detail
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.test.springbootdemo.api.entity.ActivityDetail" useGeneratedKeys="true" keyProperty="id" >
-    insert into activity_detail (create_time, update_time, activity_name, 
-      start_time, end_time, activity_type, 
-      state)
-    values (#{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{activityName,jdbcType=VARCHAR}, 
-      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{activityType,jdbcType=INTEGER}, 
-      #{state,jdbcType=INTEGER})
+    insert into activity_detail (create_time, update_time, activity_name,
+      start_time, end_time, activity_type,
+      state, extend)
+    values (#{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{activityName,jdbcType=VARCHAR},
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{activityType,jdbcType=INTEGER},
+      #{state,jdbcType=INTEGER}, #{extend,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.test.springbootdemo.api.entity.ActivityDetail" useGeneratedKeys="true" keyProperty="id" >
     insert into activity_detail
@@ -57,6 +59,9 @@
       <if test="state != null" >
         state,
       </if>
+      <if test="extend != null" >
+        extend,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="createTime != null" >
@@ -79,6 +84,9 @@
       </if>
       <if test="state != null" >
         #{state,jdbcType=INTEGER},
+      </if>
+      <if test="extend != null" >
+        #{extend,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -106,6 +114,9 @@
       <if test="state != null" >
         state = #{state,jdbcType=INTEGER},
       </if>
+      <if test="extend != null" >
+        extend = #{extend,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -117,7 +128,15 @@
       start_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},
       activity_type = #{activityType,jdbcType=INTEGER},
-      state = #{state,jdbcType=INTEGER}
+      state = #{state,jdbcType=INTEGER},
+      extend = #{extend,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="selectByActivityIdBatch" resultMap="BaseResultMap">
+    select * from activity_detail where id in
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
 </mapper>

@@ -3,7 +3,6 @@ package com.test.springbootdemo.api.request;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -28,6 +27,5 @@ public class CreateActivityReq implements Serializable {
 //    private Integer state;
 
     private List<Long> goodsList;
-
 
 }

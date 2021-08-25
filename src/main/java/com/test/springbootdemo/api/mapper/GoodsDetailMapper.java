@@ -16,9 +16,9 @@ public interface GoodsDetailMapper {
 
     GoodsDetail selectByPrimaryKey(Long id);
 
-    List<GoodsDetail> selectListId(@Param("ids") List<Long> ids);
-
     int updateByPrimaryKeySelective(GoodsDetail record);
 
     int updateByPrimaryKey(GoodsDetail record);
+
+    List<GoodsDetail> selectListId(@Param("ids") List<Long> ids);
 }

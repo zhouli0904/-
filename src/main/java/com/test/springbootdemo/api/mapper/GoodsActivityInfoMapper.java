@@ -21,4 +21,6 @@ public interface GoodsActivityInfoMapper {
     int updateByPrimaryKey(GoodsActivityInfo record);
 
     int insertBatch(@Param("list") List<GoodsActivityInfo> list);
+
+    List<Long> selectActivityIdByGoodsId(@Param("goodsId") Long goodsId);
 }
