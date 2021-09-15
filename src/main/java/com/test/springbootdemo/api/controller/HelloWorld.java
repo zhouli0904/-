@@ -13,6 +13,7 @@ public class HelloWorld {
 
     @RequestMapping("/hello1")
     public String hello02() {
+        String s = "hhh";
         return "hahah";
     }
 }
