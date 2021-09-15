@@ -21,4 +21,5 @@ public interface ActivityDetailMapper {
     int updateByPrimaryKey(ActivityDetail record);
 
     List<ActivityDetail> selectByActivityIdBatch(@Param("ids") List<Long> ids);
+
 }

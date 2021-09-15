@@ -10,4 +10,9 @@ public class HelloWorld {
     public String hello01() {
         return "hello SpringBoot";
     }
+
+    @RequestMapping("/hello1")
+    public String hello02() {
+        return "hahah";
+    }
 }

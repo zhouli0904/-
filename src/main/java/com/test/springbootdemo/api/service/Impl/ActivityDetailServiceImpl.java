@@ -2,18 +2,16 @@ package com.test.springbootdemo.api.service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.test.springbootdemo.api.entity.ActivityDetail;
+import com.test.springbootdemo.api.entity.CouponTemplate;
 import com.test.springbootdemo.api.entity.GoodsActivityInfo;
 import com.test.springbootdemo.api.entity.GoodsDetail;
-import com.test.springbootdemo.api.entity.activityExtend.DiscountExtend;
-import com.test.springbootdemo.api.entity.activityExtend.PostageExtend;
 import com.test.springbootdemo.api.mapper.ActivityDetailMapper;
+import com.test.springbootdemo.api.mapper.CouponTemplateMapper;
 import com.test.springbootdemo.api.mapper.GoodsActivityInfoMapper;
 import com.test.springbootdemo.api.mapper.GoodsDetailMapper;
-import com.test.springbootdemo.api.request.CreateActivityReq;
-import com.test.springbootdemo.api.request.CreateDiscountReq;
-import com.test.springbootdemo.api.request.CreatePostageActivity;
-import com.test.springbootdemo.api.request.ShowActivityTagsReq;
-import com.test.springbootdemo.api.service.ActivityType;
+import com.test.springbootdemo.api.request.*;
+import com.test.springbootdemo.api.service.activity.CouponActivityDTO;
+import com.test.springbootdemo.api.service.activity.CreateActivityDTO;
 import com.test.springbootdemo.api.service.inter.ActivityDetailService;
 import com.test.springbootdemo.common.BizException;
 import com.test.springbootdemo.common.Result;
@@ -22,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +37,9 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
     @Resource
     GoodsDetailMapper goodsDetailMapper;
 
+    @Resource
+    CouponTemplateMapper couponTemplateMapper;
+
     @Override
     @Transactional
     public Result<?> createActivity(CreateActivityReq createActivityReq) {
@@ -55,7 +55,10 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
 
         if (activityDetailMapper.insertSelective(activityDetail) == 1) {
             updateGoodsActivityInfo(createActivityReq, activityDetail);
-            return Result.ofSuccess(createActivityReq.getGoodsList());
+            CreateActivityDTO activityDTO = new CreateActivityDTO();
+            activityDTO.setActivityId(activityDetail.getId());
+            activityDTO.setGoodsList(createActivityReq.getGoodsList());
+            return Result.ofSuccess(activityDTO);
         }
 
         return Result.ofFail("创建活动失败");
@@ -88,7 +91,14 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
             }
         }
 
-        // 我把result放入桌子上, 以便后续使用
+        if (createActivityReq instanceof CreateCouponReq) {
+            CreateCouponReq createCouponReq = (CreateCouponReq) createActivityReq;
+            if (createCouponReq.getCouponTemplateReqList().size() > 5) {
+                throw new BizException(507, "券模板的数量大于5");
+            }
+        }
+
+        // 我把result放入桌子上, 以便后续使用 查到所有有效的商品id
         THREAD_LOCAL.set(result);
 
     }
@@ -116,7 +126,7 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
      */
     private void updateGoodsActivityInfo(CreateActivityReq createActivityReq, ActivityDetail activityDetail) {
 
-        // 我从桌子上拿到result
+        // 我从桌子上拿到result--拿到有效的商品id
         List<GoodsDetail> goodsDetails = THREAD_LOCAL.get();
         List<GoodsActivityInfo> list = new ArrayList<>();
 
@@ -139,7 +149,10 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
 
         if (activityDetailMapper.insertSelective(activityDetail) == 1) {
             updateGoodsActivityInfo(createActivityReq, activityDetail);
-            return Result.ofSuccess(createActivityReq.getGoodsList());
+            CreateActivityDTO activityDTO = new CreateActivityDTO();
+            activityDTO.setActivityId(activityDetail.getId());
+            activityDTO.setGoodsList(createActivityReq.getGoodsList());
+            return Result.ofSuccess(activityDTO);
         }
         return Result.ofFail("创建活动失败");
     }
@@ -154,102 +167,65 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
         activityDetail.setState(0);
         if (createActivityReq instanceof CreateDiscountReq) {
             activityDetail.setExtend(JSONObject.toJSONString(((CreateDiscountReq) createActivityReq).getExtend()));
-        } else if (createActivityReq instanceof CreatePostageActivity) {
-            activityDetail.setExtend(JSONObject.toJSONString(((CreatePostageActivity) createActivityReq).getExtend()));
+        } else if (createActivityReq instanceof CreatePostageActivityReq) {
+            activityDetail.setExtend(JSONObject.toJSONString(((CreatePostageActivityReq) createActivityReq).getExtend()));
         }
         return activityDetail;
     }
 
+
+
     @Override
-    public Result<?> showActivityTags(ShowActivityTagsReq showActivityTagsReq) {
-        List<String> tagList = new ArrayList<>();
+    @Transactional
+    public Result<?> createCouponActivity(CreateCouponReq createCouponReq) {
+        checkParam(createCouponReq);
+        ActivityDetail activityDetail = convertActivityModel(createCouponReq);
 
-        Long goodsId = showActivityTagsReq.getGoodsId();
-        // 根据商品id 到商品详情表中 查到 商品的price
-        GoodsDetail goodsDetail = goodsDetailMapper.selectByPrimaryKey(goodsId);
-        if (goodsDetail == null) {
-            return Result.ofFail(508, "此商品不存在");
+        if (activityDetailMapper.insertSelective(activityDetail) == 1) {
+            updateGoodsActivityInfo(createCouponReq, activityDetail);
+            List<Long> templateIdList = configureCouponTemplate(createCouponReq, activityDetail);
+
+            CouponActivityDTO activityDTO = new CouponActivityDTO();
+            activityDTO.setActivityId(activityDetail.getId());
+            activityDTO.setGoodsList(createCouponReq.getGoodsList());
+            activityDTO.setTemplateIdList(templateIdList);
+            return Result.ofSuccess(activityDTO);
         }
-        Long goodsPrice = goodsDetail.getPrice();
-
-        // 过滤 无价格 下架 无库存商品
-        if (goodsPrice == null || !goodsDetail.getOnShelf() || goodsDetail.getGoodsNum() == 0) {
-            return Result.ofFail(506, "商品无价格或下架或无库存");
-        }
-
-        // 根据商品id 到商品活动信息表中  查到所有的活动id
-        List<Long> activityIdList = goodsActivityInfoMapper.selectActivityIdByGoodsId(goodsId);
-        if (activityIdList == null) {
-            return Result.ofFail(507, goodsId + "未参加活动");
-        }
-
-        // 根据活动id 到活动详情表中 查到 活动详情
-        List<ActivityDetail> activityDetailList = activityDetailMapper.selectByActivityIdBatch(activityIdList);
-
-        // 查询【折扣标签】
-        generateDiscountTag(tagList, activityDetailList, goodsPrice);
-
-        // 查询【包邮标签】
-        generatePostageTag(tagList, activityDetailList, goodsPrice);
-
-        return Result.ofSuccess(tagList);
-    }
-
-    private void generateDiscountTag(List<String> tagList, List<ActivityDetail> activityDetailList, Long goodsPrice) {
-
-        List<Integer> discountList = new ArrayList<>();
-
-        for (ActivityDetail activityDetail : activityDetailList) {
-            // 过滤 非折扣活动 失效活动
-            if ((activityDetail.getActivityType() != ActivityType.DISCOUNT.getType()) || (activityDetail.getEndTime().getTime() < System.currentTimeMillis())) {
-                continue;
-            }
-            String extend = activityDetail.getExtend();
-            if (extend == null) {
-                continue;
-            }
-            DiscountExtend discountExtend = JSONObject.parseObject(extend, DiscountExtend.class);
-
-            if (discountExtend != null) {
-                if (goodsPrice >= discountExtend.getBasePrice()) {
-                    discountList.add(discountExtend.getDiscount());
-                }
-            }
-        }
-
-        tagList.add("限时折扣" + handleDiscountNum(Collections.min(discountList)) + "折");
-    }
-
-    // 80 处理成 8; 66 不做处理
-    private String handleDiscountNum(int discount) {
-        if (discount % 10 == 0) {
-            discount = discount / 10;
-            return String.valueOf(discount);
-        }
-        return String.valueOf(discount);
-    }
-
-    private void generatePostageTag(List<String> tagList, List<ActivityDetail> activityDetailList, Long goodsPrice) {
-        List<Long> basePriceList = new ArrayList<>();
-        for (ActivityDetail activityDetail : activityDetailList) {
-            // 过滤 非包邮活动 失效活动
-            if (activityDetail.getActivityType() != ActivityType.POSTAGE.getType() || activityDetail.getEndTime().getTime() < System.currentTimeMillis()) {
-                continue;
-            }
-            String extend = activityDetail.getExtend();
-            if (extend == null) {
-                continue;
-            }
-            PostageExtend postageExtend = JSONObject.parseObject(extend, PostageExtend.class);
-            if (postageExtend != null) {
-                basePriceList.add(postageExtend.getBasePrice());
-            }
-        }
-        if (goodsPrice >= Collections.min(basePriceList)) {
-            tagList.add("包邮");
-        }
-
+        return Result.ofFail("创建活动失败");
     }
 
 
+    private List<Long> configureCouponTemplate(CreateCouponReq createCouponReq, ActivityDetail activityDetail){
+        List<CouponTemplateReq> couponTemplateReqList = createCouponReq.getCouponTemplateReqList();
+        List<Long> templateIdList = new ArrayList<>();
+        for (CouponTemplateReq couponTemplateReq : couponTemplateReqList) {
+            CouponTemplate couponTemplate = new CouponTemplate();
+            couponTemplate.setActivityId(activityDetail.getId());
+            couponTemplate.setTemplateName(couponTemplateReq.getTemplateName());
+            couponTemplate.setBasePrice(couponTemplateReq.getBasePrice());
+            couponTemplate.setPreferentialAmount(couponTemplateReq.getPreferentialAmount());
+            couponTemplate.setStartTime(new Date(couponTemplateReq.getStartTime()));
+            couponTemplate.setEndTime(new Date(couponTemplateReq.getEndTime()));
+            couponTemplate.setCouponNum(couponTemplateReq.getCouponNum());
+            couponTemplate.setRemainedNum(couponTemplateReq.getCouponNum()); // 券剩余数量默认是券总数
+            couponTemplateMapper.insertSelective(couponTemplate);
+            templateIdList.add(couponTemplate.getId());
+        }
+        return templateIdList;
+    }
+
+    @Override
+    public Result<?> reviewActivity(ReviewActivityReq reviewActivityReq) {
+        Long activityId = reviewActivityReq.getActivityId();
+        ActivityDetail select = activityDetailMapper.selectByPrimaryKey(activityId);
+        if (select.getState() == 1) {
+            return Result.ofFail(601, "活动已启用，无法审核");
+        }
+
+        ActivityDetail activityDetail = new ActivityDetail();
+        activityDetail.setId(activityId);
+        activityDetail.setState(1);
+        activityDetailMapper.updateByPrimaryKeySelective(activityDetail);
+        return Result.ofSuccess("活动审核成功");
+    }
 }

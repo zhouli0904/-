@@ -1,4 +1,4 @@
-package com.test.springbootdemo.api.request;
+package com.test.springbootdemo.api.request.goodsDetailPage;
 
 import lombok.Data;
 
@@ -6,4 +6,5 @@ import lombok.Data;
 public class ShowActivityTagsReq {
 
     private Long goodsId;
+
 }

@@ -5,14 +5,14 @@ import com.test.springbootdemo.api.mapper.GoodsDetailMapper;
 import com.test.springbootdemo.api.request.AddGoodsReq;
 import com.test.springbootdemo.api.request.UpdateGoodsNumReq;
 import com.test.springbootdemo.api.request.UpdateShelfReq;
-import com.test.springbootdemo.api.service.inter.GoodsDetailService;
+import com.test.springbootdemo.api.service.inter.goodsManagerService;
 import com.test.springbootdemo.common.Result;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 @Service
-public class GoodsDetailServiceImpl implements GoodsDetailService {
+public class GoodsManagerServiceImpl implements goodsManagerService {
 
     @Resource
     GoodsDetailMapper goodsDetailMapper;
@@ -120,5 +120,11 @@ public class GoodsDetailServiceImpl implements GoodsDetailService {
         goodsDetail.setGoodsNum(select.getGoodsNum() - updateGoodsNumReq.getGoodsNum());
         goodsDetailMapper.updateByPrimaryKeySelective(goodsDetail);
         return Result.ofSuccess("扣减库存成功");
+    }
+
+    @Override
+    public Result<GoodsDetail> selectGoods(Long id) {
+        GoodsDetail goodsDetail = goodsDetailMapper.selectByPrimaryKey(id);
+        return Result.ofSuccess(goodsDetail);
     }
 }

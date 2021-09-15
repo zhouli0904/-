@@ -1,23 +1,26 @@
 package com.test.springbootdemo.api.controller;
 
+import com.test.springbootdemo.api.entity.GoodsDetail;
 import com.test.springbootdemo.api.request.AddGoodsReq;
 import com.test.springbootdemo.api.request.UpdateGoodsNumReq;
 import com.test.springbootdemo.api.request.UpdateShelfReq;
-import com.test.springbootdemo.api.service.inter.GoodsDetailService;
+import com.test.springbootdemo.api.service.inter.goodsManagerService;
 import com.test.springbootdemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/goods")
-public class GoodsDetailController {
+public class GoodsManagerController {
 
 //    @Resource(name = "goodsDetailServiceImpl")
     @Autowired
-    GoodsDetailService goodsDetailService;
+    goodsManagerService goodsManagerService;
+
+    @GetMapping("/select")
+    public Result<GoodsDetail> select(@RequestParam Long id) {
+        return goodsManagerService.selectGoods(id);
+    }
 
     @PostMapping("/create")
     public Result<?> create(@RequestBody AddGoodsReq addGoodsReq) {
@@ -27,7 +30,7 @@ public class GoodsDetailController {
             return Result.ofFail("参数不正确");
         }
 
-        Integer result = goodsDetailService.addGoods(addGoodsReq);
+        Integer result = goodsManagerService.addGoods(addGoodsReq);
         if (result != null) {
             return Result.ofSuccess(result);
         }else {
@@ -42,7 +45,7 @@ public class GoodsDetailController {
         if (shelf == null || id == null) {
             return Result.ofFail("参数不正确");
         }
-        Integer result = goodsDetailService.updateShelf(updateShelfReq);
+        Integer result = goodsManagerService.updateShelf(updateShelfReq);
         if (result == null || result == -1) {
             return Result.ofFail("更新失败");
         }else {
@@ -52,12 +55,12 @@ public class GoodsDetailController {
 
     @PostMapping("/addGoodsNum")
     public Result<?> addGoodsNum(@RequestBody UpdateGoodsNumReq updateGoodsNumReq) {
-        return goodsDetailService.addGoodsNum(updateGoodsNumReq);
+        return goodsManagerService.addGoodsNum(updateGoodsNumReq);
     }
 
     @PostMapping("reduceGoodsNum")
     public Result<?> reduceGoodsNum(@RequestBody UpdateGoodsNumReq updateGoodsNumReq) {
-        return goodsDetailService.reduceGoodsNum(updateGoodsNumReq);
+        return goodsManagerService.reduceGoodsNum(updateGoodsNumReq);
     }
 
 

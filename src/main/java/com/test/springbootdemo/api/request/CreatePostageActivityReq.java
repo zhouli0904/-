@@ -4,7 +4,7 @@ import com.test.springbootdemo.api.entity.activityExtend.PostageExtend;
 import lombok.Data;
 
 @Data
-public class CreatePostageActivity extends CreateActivityReq{
+public class CreatePostageActivityReq extends CreateActivityReq{
 
     private PostageExtend extend;
 }

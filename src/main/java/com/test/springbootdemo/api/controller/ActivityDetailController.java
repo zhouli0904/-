@@ -1,9 +1,6 @@
 package com.test.springbootdemo.api.controller;
 
-import com.test.springbootdemo.api.request.CreateActivityReq;
-import com.test.springbootdemo.api.request.CreateDiscountReq;
-import com.test.springbootdemo.api.request.CreatePostageActivity;
-import com.test.springbootdemo.api.request.ShowActivityTagsReq;
+import com.test.springbootdemo.api.request.*;
 import com.test.springbootdemo.api.service.inter.ActivityDetailService;
 import com.test.springbootdemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +38,19 @@ public class ActivityDetailController {
     }
 
     @PostMapping("/createPostageActivity")
-    public Result<?> createPostageActivity(@RequestBody CreatePostageActivity createPostageActivity) {
-        return activityDetailService.createActivityNew(createPostageActivity);
-    }
-
-    @PostMapping("/showActivityTags")
-    public Result<?> showActivityTags(@RequestBody ShowActivityTagsReq showActivityTagsReq) {
-        return activityDetailService.showActivityTags(showActivityTagsReq);
+    public Result<?> createPostageActivity(@RequestBody CreatePostageActivityReq createPostageActivityReq) {
+        return activityDetailService.createActivityNew(createPostageActivityReq);
     }
 
 
+    @PostMapping("/createCouponActivity")
+    public Result<?> createCouponActivity(@RequestBody CreateCouponReq createCouponReq) {
+        return activityDetailService.createCouponActivity(createCouponReq);
+    }
 
+    @PostMapping("/reviewActivity")
+    private Result<?> reviewActivity(@RequestBody ReviewActivityReq reviewActivityReq) {
+        return activityDetailService.reviewActivity(reviewActivityReq);
+    }
 
 }

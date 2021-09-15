@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.springbootdemo.api.mapper.ReceivedCouponRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.test.springbootdemo.api.entity.ReceivedCouponRecord" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="template_id" property="templateId" jdbcType="BIGINT" />
+    <result column="goods_id" property="goodsId" jdbcType="BIGINT" />
+    <result column="activity_id" property="activityId" jdbcType="BIGINT" />
+    <result column="receive_state" property="receiveState" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, template_id, goods_id, activity_id, receive_state, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from received_coupon_record
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from received_coupon_record
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.test.springbootdemo.api.entity.ReceivedCouponRecord" useGeneratedKeys="true" keyProperty="id" >
+    insert into received_coupon_record (user_id, template_id, goods_id, 
+      activity_id, receive_state, create_time, 
+      update_time)
+    values (#{userId,jdbcType=BIGINT}, #{templateId,jdbcType=BIGINT}, #{goodsId,jdbcType=BIGINT}, 
+      #{activityId,jdbcType=BIGINT}, #{receiveState,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.test.springbootdemo.api.entity.ReceivedCouponRecord" useGeneratedKeys="true" keyProperty="id" >
+    insert into received_coupon_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="activityId != null" >
+        activity_id,
+      </if>
+      <if test="receiveState != null" >
+        receive_state,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=BIGINT},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=BIGINT},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=BIGINT},
+      </if>
+      <if test="receiveState != null" >
+        #{receiveState,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.test.springbootdemo.api.entity.ReceivedCouponRecord" >
+    update received_coupon_record
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=BIGINT},
+      </if>
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=BIGINT},
+      </if>
+      <if test="activityId != null" >
+        activity_id = #{activityId,jdbcType=BIGINT},
+      </if>
+      <if test="receiveState != null" >
+        receive_state = #{receiveState,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.test.springbootdemo.api.entity.ReceivedCouponRecord" >
+    update received_coupon_record
+    set user_id = #{userId,jdbcType=BIGINT},
+      template_id = #{templateId,jdbcType=BIGINT},
+      goods_id = #{goodsId,jdbcType=BIGINT},
+      activity_id = #{activityId,jdbcType=BIGINT},
+      receive_state = #{receiveState,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectTemplateIdByUserIdAndState" resultType="java.lang.Long">
+    select template_id from received_coupon_record where user_id = #{userId} and receive_state = #{receiveState} order by create_time desc
+  </select>
+  <select id="selectStateByUserIdAndTemplateId" resultType="java.lang.Integer">
+    select receive_state from received_coupon_record where user_id = #{userId} and template_id = #{templateId}
+  </select>
+</mapper>

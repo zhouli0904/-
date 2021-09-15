@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.springbootdemo.api.mapper.CouponTemplateMapper" >
+  <resultMap id="BaseResultMap" type="com.test.springbootdemo.api.entity.CouponTemplate" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="activity_id" property="activityId" jdbcType="BIGINT" />
+    <result column="template_name" property="templateName" jdbcType="VARCHAR" />
+    <result column="base_price" property="basePrice" jdbcType="BIGINT" />
+    <result column="preferential_amount" property="preferentialAmount" jdbcType="BIGINT" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="coupon_num" property="couponNum" jdbcType="BIGINT" />
+    <result column="remained_num" property="remainedNum" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, activity_id, template_name, base_price, preferential_amount, start_time, end_time, 
+    coupon_num, remained_num, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from coupon_template
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from coupon_template
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.test.springbootdemo.api.entity.CouponTemplate" useGeneratedKeys="true" keyProperty="id" >
+    insert into coupon_template (activity_id, template_name, base_price, 
+      preferential_amount, start_time, end_time, 
+      coupon_num, remained_num, create_time, 
+      update_time)
+    values (#{activityId,jdbcType=BIGINT}, #{templateName,jdbcType=VARCHAR}, #{basePrice,jdbcType=BIGINT}, 
+      #{preferentialAmount,jdbcType=BIGINT}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{couponNum,jdbcType=BIGINT}, #{remainedNum,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.test.springbootdemo.api.entity.CouponTemplate" useGeneratedKeys="true" keyProperty="id" >
+    insert into coupon_template
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="activityId != null" >
+        activity_id,
+      </if>
+      <if test="templateName != null" >
+        template_name,
+      </if>
+      <if test="basePrice != null" >
+        base_price,
+      </if>
+      <if test="preferentialAmount != null" >
+        preferential_amount,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="couponNum != null" >
+        coupon_num,
+      </if>
+      <if test="remainedNum != null" >
+        remained_num,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="activityId != null" >
+        #{activityId,jdbcType=BIGINT},
+      </if>
+      <if test="templateName != null" >
+        #{templateName,jdbcType=VARCHAR},
+      </if>
+      <if test="basePrice != null" >
+        #{basePrice,jdbcType=BIGINT},
+      </if>
+      <if test="preferentialAmount != null" >
+        #{preferentialAmount,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="couponNum != null" >
+        #{couponNum,jdbcType=BIGINT},
+      </if>
+      <if test="remainedNum != null" >
+        #{remainedNum,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.test.springbootdemo.api.entity.CouponTemplate" >
+    update coupon_template
+    <set >
+      <if test="activityId != null" >
+        activity_id = #{activityId,jdbcType=BIGINT},
+      </if>
+      <if test="templateName != null" >
+        template_name = #{templateName,jdbcType=VARCHAR},
+      </if>
+      <if test="basePrice != null" >
+        base_price = #{basePrice,jdbcType=BIGINT},
+      </if>
+      <if test="preferentialAmount != null" >
+        preferential_amount = #{preferentialAmount,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="couponNum != null" >
+        coupon_num = #{couponNum,jdbcType=BIGINT},
+      </if>
+      <if test="remainedNum != null" >
+        remained_num = #{remainedNum,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.test.springbootdemo.api.entity.CouponTemplate" >
+    update coupon_template
+    set activity_id = #{activityId,jdbcType=BIGINT},
+      template_name = #{templateName,jdbcType=VARCHAR},
+      base_price = #{basePrice,jdbcType=BIGINT},
+      preferential_amount = #{preferentialAmount,jdbcType=BIGINT},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      coupon_num = #{couponNum,jdbcType=BIGINT},
+      remained_num = #{remainedNum,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByActivityId" resultMap="BaseResultMap">
+    select * from coupon_template where activity_id in
+    <foreach collection="activityId" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+
+  <update id="updateRemainNum">
+    update coupon_template set remained_num = remained_num-1 where id = #{templateId} and remained_num > 0
+  </update>
+</mapper>
